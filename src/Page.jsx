@@ -6,97 +6,111 @@ import Image4 from './assets/background.webp'
 import Video from './assets/Video2.mp4'
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Copy from './components/Copy';
 import Lenis from 'lenis';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export const Tryout = () => {
-    useEffect(() => {
-        const lenis = new Lenis();
+    const lenisRef = useRef(null);
     
+    useEffect(() => {
+        // Initialize Lenis
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smoothWheel: true,
+            wheelMultiplier: 1,
+            touchMultiplier: 2,
+        });
+        
+        lenisRef.current = lenis;
+
         // Sync ScrollTrigger with Lenis
         lenis.on("scroll", ScrollTrigger.update);
-    
+
         // Use GSAP ticker to drive Lenis
         const raf = (time) => {
-          lenis.raf(time * 1000);
+            lenis.raf(time * 1000);
         };
+        
         gsap.ticker.add(raf);
         gsap.ticker.lagSmoothing(0);
-    
-    
-    
-        // Refresh ScrollTrigger after setup
-        ScrollTrigger.refresh();
-    
+
         // Clean up
         return () => {
-          gsap.ticker.remove(raf);
-          lenis.destroy();
+            gsap.ticker.remove(raf);
+            lenis.destroy();
         };
-       
-       
-          
-      }, []);
-    
+    }, []);
+
     useGSAP(() => {
-        // Get all text sections and images
-        const textSections = document.querySelectorAll('.text-section');
-        const images = document.querySelectorAll('.image');
+        // Wait for DOM to be ready and Lenis to initialize
+        const initScrollTrigger = () => {
+            const textSections = document.querySelectorAll('.text-section');
+            const images = document.querySelectorAll('.image');
 
-        // Function to show specific image with animation
-        function showImage(imageIndex) {
-            // Hide all images
-            gsap.to('.image', {
-                opacity: 0,
-                scale: 0.8,
-                duration: 0.4,
-                ease: "power2.inOut"
+            if (textSections.length === 0 || images.length === 0) {
+                // If elements aren't ready yet, try again
+                setTimeout(initScrollTrigger, 100);
+                return;
+            }
+
+            // Function to show specific image with animation
+            function showImage(imageIndex) {
+                // Hide all images
+                gsap.to('.image', {
+                    opacity: 0,
+                    scale: 0.8,
+                    duration: 0.4,
+                    ease: "power2.inOut"
+                });
+
+                // Show target image
+                gsap.to(`[data-image="${imageIndex}"]`, {
+                    opacity: 1,
+                    scale: 1,
+                    duration: 0.6,
+                    ease: "power2.inOut", // Fixed typo: was "powwer2.inOut"
+                });
+            }
+
+            // Create ScrollTrigger for each text section
+            textSections.forEach((section, index) => {
+                const imageIndex = section.getAttribute('data-image');
+                
+                ScrollTrigger.create({
+                    trigger: section,
+                    start: "top center",
+                    end: "bottom center",
+                    onEnter: () => showImage(imageIndex),
+                    onEnterBack: () => showImage(imageIndex),
+                    // Uncomment for debugging
+                    // markers: true,
+                    // id: `section-${index + 1}`
+                });
             });
 
-            // Show target image
-            gsap.to(`[data-image="${imageIndex}"]`, {
-                opacity: 1,
-                scale: 1,
-                duration: 0.6,
-                ease: "powwer2.inOut",
-            });
-        }
+            // Initialize first image after a small delay
+            setTimeout(() => {
+                showImage('1');
+                // Scroll to top to ensure we start at the beginning
+                if (lenisRef.current) {
+                    lenisRef.current.scrollTo(0, { immediate: true });
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'instant' });
+                }
+            }, 100);
 
-        // Create ScrollTrigger for each text section
-        textSections.forEach((section, index) => {
-            const imageIndex = section.getAttribute('data-image');
-            
-            ScrollTrigger.create({
-                trigger: section,
-                start: "top center",
-                end: "bottom center",
-                onEnter: () => showImage(imageIndex),
-                onEnterBack: () => showImage(imageIndex),
-                // Uncomment for debugging
-                // markers: true,
-                // id: `section-${index + 1}`
-            });
-        });
+            // Refresh ScrollTrigger after everything is set up
+            ScrollTrigger.refresh();
+        };
 
-        // Initialize first image
-        showImage('1');
+        // Start initialization
+        initScrollTrigger();
 
-        // Optional: Add parallax effect to images
-        // gsap.to('.image-wrapper', {
-        //     y: -50,
-        //     ease: "none",
-        //     scrollTrigger: {
-        //         trigger: '.text-container',
-        //         start: "top bottom",
-        //         end: "bottom top",
-        //         scrub: 1
-        //     }
-        // });
-
-        // Refresh ScrollTrigger on window resize
+        // Handle resize
         const handleResize = () => {
             ScrollTrigger.refresh();
         };
@@ -109,7 +123,37 @@ export const Tryout = () => {
             ScrollTrigger.getAll().forEach(trigger => trigger.kill());
         };
         
-    }); // useGSAP dependency array can be empty for this use case
+    }, []); // Empty dependency array
+
+    // Handle page load - ensure we start at top
+    useEffect(() => {
+        const handleLoad = () => {
+            // Force scroll to top on page load
+            setTimeout(() => {
+                if (lenisRef.current) {
+                    lenisRef.current.scrollTo(0, { immediate: true });
+                } else {
+                    window.scrollTo({ top: 0, behavior: 'instant' });
+                }
+                // Refresh ScrollTrigger after scroll reset
+                ScrollTrigger.refresh();
+            }, 50);
+        };
+
+        // Handle both initial load and navigation
+        if (document.readyState === 'complete') {
+            handleLoad();
+        } else {
+            window.addEventListener('load', handleLoad);
+        }
+
+        // Also handle when component first mounts
+        handleLoad();
+
+        return () => {
+            window.removeEventListener('load', handleLoad);
+        };
+    }, []);
 
     return (
         <>
@@ -122,8 +166,6 @@ export const Tryout = () => {
         <li><a href="#">Contact</a></li>
       </ul>
       </div>   
-      
-
       
       <p className='blessings'><span className='spacer'>&nbsp;</span>Premium branding, websites, and digital solutions designed to give your business a competitive advantage.</p>
     
