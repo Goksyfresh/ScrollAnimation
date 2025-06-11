@@ -41,7 +41,7 @@ section{
   height: 100%;
   object-fit: cover;
 }
- h1{
+ .heading{
   font-weight: 900;
   font-family: "Roboto", sans-serif;
   font-size: 204px;
@@ -49,12 +49,43 @@ section{
   width: 100%;
   text-transform: uppercase;
   position: absolute;
-  bottom: -7%;
-  left: 8px;
-
-
-
+  bottom: -6%;
+  left: 50%;
+  transform: translateX(-50%);
+ }
+.nav{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  top: 2%;
+  left: 0;
+  width: 100%;
 }
+
+.navHead{
+  font-size: 20px;
+  font-weight: bold
+  ;
+  margin-left: 15px;
+}
+
+.harmburger{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-right: 25px;
+}
+.ham{
+  background-color: black;
+  margin-bottom: 2px;
+  height: 2px;
+  width: 15px;
+  border-radius: 3px;
+}
+
+
 .menu{
   position: absolute;
   top: 20px;
@@ -203,12 +234,15 @@ span.spacer{
 .width h1{
   color: white;
   display: flex;
+  font-family: "Roboto", sans-serif;
+  font-size: 45px;
   position: absolute;
-  top: 0;
-  left: 0;
+  text-transform: uppercase;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  left: 50%;
   align-items: center;
   justify-content: center;
-  font-size: 45px;
   font-weight: bold;
   text-decoration: underline;
   z-index: 1;

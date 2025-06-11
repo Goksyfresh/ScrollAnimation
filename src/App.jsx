@@ -89,11 +89,12 @@ function App() {
       { height: 0 },
       {
         height: '400px',
-        duration: 1.5,
+        duration: 2,
         ease: 'power4.out',
+        scrub:1,
         scrollTrigger: {
           trigger: imageWrapper.current,
-          start: 'top 80%',
+          start: 'top 85%',
           toggleActions: 'play none none none'
         }
       }
@@ -123,7 +124,6 @@ function App() {
           opacity:1,
           ease:'power2.inOut',
           scale:1,
-          delay:1,
           duration:1,
           scrollTrigger:{
             trigger:'.container3',
@@ -148,7 +148,10 @@ function App() {
       </div>
     
      </div>
-     <h1>John taylor</h1>  
+     <Copy>
+     <h1 className='heading'>John taylor</h1> 
+     </Copy>
+      
      <div className="menu">
       <ul>
         <li><a href="#">Home</a></li>

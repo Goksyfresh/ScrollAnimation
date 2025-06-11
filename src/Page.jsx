@@ -158,6 +158,13 @@ export const Tryout = () => {
     return (
         <>
         <section>
+            <div className="nav">
+                <h2 className='navHead'>JT</h2>
+                <div className="harmburger">
+                    <div className='ham'></div>
+                    <div className='ham'></div>
+                </div>
+            </div>
         <div className="menu">
       <ul>
         <li><a href="#">Home</a></li>
@@ -215,7 +222,7 @@ export const Tryout = () => {
                     <p>User-focused, aesthetically refined websites that balance functionality with visual appeal.</p>
                 </div>
 
-              
+               
             </div>
 
             <div className="image-container">
