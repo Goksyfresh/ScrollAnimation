@@ -137,7 +137,7 @@ function App() {
     <>
     <section>
 
-  
+
      <div className='container' ref={firstSect}>
       <div className="content">
         <h2>Creative Developer</h2>
@@ -148,9 +148,12 @@ function App() {
       </div>
     
      </div>
-     <Copy>
+     <div className='johnTaylor'>
+      <Copy>
      <h1 className='heading'>John taylor</h1> 
      </Copy>
+     </div>
+     
       
      <div className="menu">
       <ul>

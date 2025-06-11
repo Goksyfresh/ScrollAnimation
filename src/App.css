@@ -41,17 +41,23 @@ section{
   height: 100%;
   object-fit: cover;
 }
+.johnTaylor{
+  position: absolute;
+  bottom: -6%;
+  
+  text-align: center;
+  width: 100vw;
+  left: 50%;
+  transform: translateX(-50%);
+}
  .heading{
   font-weight: 900;
   font-family: "Roboto", sans-serif;
   font-size: 204px;
   letter-spacing: 1px;
-  width: 100%;
+  
   text-transform: uppercase;
-  position: absolute;
-  bottom: -6%;
-  left: 50%;
-  transform: translateX(-50%);
+ 
  }
 .nav{
   display: flex;
